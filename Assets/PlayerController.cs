@@ -4,24 +4,26 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float movementSpeed = 2f;
-    private Rigidbody2D rb;
-    private Vector2 movementDirection;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float slowingTime = 2f;
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
-    // Update is called once per frame
+    private Vector2 movement;
+    public bool isMoving;
+   
     void Update()
     {
-        movementDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-    }
+        movement.x = Input.GetAxisRaw("Horizontal"); // A/D per muovere a sinistra/destra
+        movement.y = Input.GetAxisRaw("Vertical"); // W/S per muovere su/giù
 
-    void FixedUpdate() {
-        rb.velocity = movementDirection * movementSpeed;
+        if (movement.x != 0 || movement.y != 0)
+        {
+            isMoving = true;
+            transform.position += new Vector3(movement.x, movement.y, 0) * moveSpeed * Time.deltaTime;
+        }
+        else
+        {
+            movement = Vector2.Lerp(movement, Vector2.zero, slowingTime * Time.deltaTime);
+            isMoving = false;
+        }
     }
 }
